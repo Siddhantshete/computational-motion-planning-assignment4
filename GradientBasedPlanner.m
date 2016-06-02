@@ -14,7 +14,31 @@ function route = GradientBasedPlanner (f, start_coords, end_coords, max_its)
 
 %%% All of your code should be between the two lines of stars.
 % *******************************************************************
-route = 0;
+route = start_coords;
+position = start_coords;
+
+for i = 2:max_its
+    direction = [gx(round(position(2)), round(position(1))), ...
+                 gy(round(position(2)), round(position(1)))];
+    direction = direction / norm(direction);
+    position = position + direction;
+    route = [route; position];
+    
+    % Check bounds
+    if (round(position(1)) < 1 || ...
+        round(position(2)) < 1 || ...
+        round(position(2)) > size(f,1) || ...
+        round(position(1)) > size(f,2))
+        disp('ERROR: Going out of bounds');
+        return;
+    end;
+    
+    % Check distance to goal
+    distance_to_goal = norm(position - end_coords);
+    if (distance_to_goal < 2)
+        return;
+    end;
+end
 
 % *******************************************************************
 end
